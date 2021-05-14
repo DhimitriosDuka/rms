@@ -3,6 +3,7 @@ package com.rms.rms.mapper;
 import com.rms.rms.config.ModelMapperBean;
 import com.rms.rms.dto.ingredient.IngredientCreateDto;
 import com.rms.rms.dto.ingredient.IngredientResponseDto;
+import com.rms.rms.dto.ingredient.IngredientUpdateDto;
 import com.rms.rms.entity.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,10 @@ public class IngredientMapper {
 
     public IngredientResponseDto entityToResponseDto(Ingredient ingredient) {
         return modelMapperBean.modelMapper().map(ingredient, IngredientResponseDto.class);
+    }
+
+    public Ingredient updateDtoToEntity(IngredientUpdateDto ingredient) {
+        return modelMapperBean.modelMapper().map(ingredient, Ingredient.class);
     }
 
 }
