@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface IngredientsRepository extends JpaRepository<Ingredient, Long> {
     Optional<Ingredient> findByName(String name);
+    boolean existsById(Long id);
 }

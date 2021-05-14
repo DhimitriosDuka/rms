@@ -8,7 +8,6 @@ import com.rms.rms.service.IngredientService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -23,11 +22,8 @@ public class IngredientServiceImpl implements IngredientService {
         checkNullabilityOfParameters(ingredient);
         ingredientsRepository.findByName(ingredient.getName())
                 .ifPresent(value -> {
-                    if (Objects.isNull(ingredient.getId()) || !ingredient.getId().equals(value.getId())){
-                        throw new IngredientException("Ingredient with name: " + value.getName() + " already exists!");
-                    }
+                    throw new IngredientException("Ingredient with name: " + value.getName() + " already exists!");
                 });
-        ingredient.setUpdatedAt(LocalDateTime.now());
         return ingredientsRepository.save(ingredient);
     }
 
@@ -47,29 +43,32 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public Ingredient update(Long id, Ingredient ingredient) {
+
         checkNullabilityOfParameters(id, ingredient);
-        Ingredient ingredientToBeUpdated = findById(id);
-        ingredientToBeUpdated.setUpdatedAt(null);
-        Field[] fields = ingredient.getClass().getDeclaredFields();
-        try {
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object attribute = field.get(ingredient);
-                if(Objects.nonNull(attribute)){
-                    field.set(ingredientToBeUpdated, attribute);
-                }
-            }
-            ingredientToBeUpdated.setUpdatedAt(LocalDateTime.now());
-            return save(ingredientToBeUpdated);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+
+        if(doesNotExistsById(id)) {
+            throw new IngredientException("Ingredient with id: " + id + " does not exists!");
         }
-        return null;
+
+        Optional<Ingredient> existingIngredientWithName = ingredientsRepository.findByName(ingredient.getName());
+        if(existingIngredientWithName.isPresent()) {
+            Ingredient ingredientOptionalValue = existingIngredientWithName.get();
+            if(!ingredientOptionalValue.getId().equals(id)) {
+                throw new IngredientException("Ingredient with name: " + ingredientOptionalValue.getName() + " already exists!");
+            }
+        }
+        ingredient.setId(id);
+        ingredient.setUpdatedAt(LocalDateTime.now());
+        return ingredientsRepository.save(ingredient);
+    }
+
+    private boolean doesNotExistsById(Long id) {
+        return !ingredientsRepository.existsById(id);
     }
 
     private void checkNullabilityOfParameters(Object... objects) {
         for (Object o : objects) {
-            if(Objects.isNull(o)) throw new NullParameterException("Parameter must not be null!");
+            if(Objects.isNull(o)) throw new NullParameterException("Parameter/s must not be null!");
         }
     }
 }
