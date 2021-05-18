@@ -57,8 +57,8 @@ CREATE TABLE orders (
 
 CREATE TABLE orders_menu_items (
 	amount INT NOT NULL,
-	ingredient_id BIGINT REFERENCES ingredient(id) ,
-	dish_id BIGINT REFERENCES menu_item(id),
+	menu_item_id BIGINT REFERENCES menu_item(id) ,
+	order_id BIGINT REFERENCES orders(id),
 	PRIMARY KEY(ingredient_id, dish_id)
 );
 
