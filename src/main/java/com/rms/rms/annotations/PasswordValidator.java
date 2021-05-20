@@ -4,6 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PasswordValidator implements ConstraintValidator<Password, String> {
@@ -11,6 +12,12 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
     }
 
     public boolean isValid(String password, ConstraintValidatorContext context) {
+
+        if(Objects.isNull(password)) {
+            context.buildConstraintViolationWithTemplate("Password must not be null!").addConstraintViolation();
+            return false;
+        }
+
         List<String> errors = new ArrayList<>();
 
         if(notValidLength(password)) errors.add("Password must be between 8 and 16 characters.");

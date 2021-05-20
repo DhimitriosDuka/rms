@@ -1,5 +1,6 @@
 package com.rms.rms.dto.user;
 
+import com.rms.rms.annotations.Password;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserUpdatePasswordDto {
 
+    @Password
     private String password;
 
 }

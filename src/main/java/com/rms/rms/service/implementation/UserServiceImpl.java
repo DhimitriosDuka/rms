@@ -10,6 +10,8 @@ import com.rms.rms.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -17,14 +19,13 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class UserServiceImpl extends SuperService implements UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
-    public UserResponseDto save(UserCreateDto user) {
-        checkNullabilityOfParameters(user);
+    public UserResponseDto save(@Valid UserCreateDto user) {
         userRepository.findByUserName(user.getUserName())
                 .ifPresent(value -> {
                     throw new UserException("User with username: " + user.getUserName() + " already exists!");
@@ -48,8 +49,7 @@ public class UserServiceImpl extends SuperService implements UserService {
     }
 
     @Override
-    public UserResponseDto update(Long id, UserUpdateDto user) {
-        checkNullabilityOfParameters(id, user);
+    public UserResponseDto update(@NotNull Long id, @Valid UserUpdateDto user) {
         User userToBeUpdated = getUserById(id);
 
         Optional<User> userWithUsername = userRepository.findByUserName(user.getUserName());
@@ -68,16 +68,14 @@ public class UserServiceImpl extends SuperService implements UserService {
     }
 
     @Override
-    public UserResponseDto findById(Long id) {
-        checkNullabilityOfParameters(id);
+    public UserResponseDto findById(@NotNull Long id) {
         return userRepository.findById(id)
                 .map(userMapper::entityToResponseDto)
                 .orElseThrow(() -> new UserException("User with id: " + id + " does not exist!"));
     }
 
     @Override
-    public void delete(Long id) {
-        checkNullabilityOfParameters(id);
+    public void delete(@NotNull Long id) {
         User userWithId = getUserById(id);
         if(!userWithId.getActive()) {
             throw new UserException("User with id: " + id + " is inactive!");
@@ -88,8 +86,7 @@ public class UserServiceImpl extends SuperService implements UserService {
     }
 
     @Override
-    public UserResponseDto updateRole(Long id, UserRoleUpdateDto role) {
-        checkNullabilityOfParameters(id, role);
+    public UserResponseDto updateRole(@NotNull Long id, @Valid UserRoleUpdateDto role) {
         User userWithId = getUserById(id);
 
         if(userWithId.getRole().equals(role.getRole())) {
@@ -101,9 +98,7 @@ public class UserServiceImpl extends SuperService implements UserService {
     }
 
     @Override
-    public void updatePassword(Long id, UserUpdatePasswordDto password) {
-        checkNullabilityOfParameters(id, password);
-
+    public void updatePassword(@NotNull Long id, @Valid UserUpdatePasswordDto password) {
         User userWithId = getUserById(id);
         userWithId.setPassword(password.getPassword());
         setUpdatedAtField(userWithId);
