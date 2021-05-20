@@ -1,9 +1,12 @@
 package com.rms.rms.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rms.rms.entity.embedded.MenuItemIngredientId;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Entity
@@ -23,6 +26,7 @@ public class MenuItemIngredient {
     @MapsId("ingredientId")
     private Ingredient ingredient;
 
+    @NotBlank(message = "Amount must not be blank!")
     private Integer amount;
 
 }

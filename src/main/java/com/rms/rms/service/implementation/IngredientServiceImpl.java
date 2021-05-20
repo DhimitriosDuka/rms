@@ -5,13 +5,14 @@ import com.rms.rms.dto.ingredient.IngredientResponseDto;
 import com.rms.rms.dto.ingredient.IngredientUpdateDto;
 import com.rms.rms.entity.Ingredient;
 import com.rms.rms.exception.IngredientException;
-import com.rms.rms.exception.NullParameterException;
 import com.rms.rms.mapper.IngredientMapper;
 import com.rms.rms.repository.IngredientsRepository;
 import com.rms.rms.service.IngredientService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,9 +25,7 @@ public class IngredientServiceImpl implements IngredientService {
     public final IngredientMapper ingredientMapper;
 
     @Override
-    public IngredientResponseDto save(IngredientCreateDto ingredient) {
-        checkNullabilityOfParameters(ingredient);
-
+    public IngredientResponseDto save(@Valid IngredientCreateDto ingredient) {
         Ingredient entityIngredient = ingredientMapper.createDtoToEntity(ingredient);
         ingredientsRepository.findByName(entityIngredient.getName())
                 .ifPresent(value -> {
@@ -44,8 +43,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public IngredientResponseDto findById(Long id) {
-        checkNullabilityOfParameters(id);
+    public IngredientResponseDto findById(@NotNull Long id) {
         return Optional.of(ingredientsRepository.findById(id))
                     .get()
                     .map(ingredientMapper::entityToResponseDto)
@@ -53,10 +51,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public IngredientResponseDto update(Long id, IngredientUpdateDto ingredient) {
-
-        checkNullabilityOfParameters(id, ingredient);
-
+    public IngredientResponseDto update(@NotNull Long id, @Valid IngredientUpdateDto ingredient) {
         if(doesNotExistsById(id)) {
             throw new IngredientException("Ingredient with id: " + id + " does not exists!");
         }
@@ -79,9 +74,4 @@ public class IngredientServiceImpl implements IngredientService {
         return !ingredientsRepository.existsById(id);
     }
 
-    private void checkNullabilityOfParameters(Object... objects) {
-        for (Object o : objects) {
-            if(Objects.isNull(o)) throw new NullParameterException("Parameter/s must not be null!");
-        }
-    }
 }

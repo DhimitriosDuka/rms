@@ -2,7 +2,6 @@ package com.rms.rms.dto.user;
 
 
 import com.rms.rms.enums.Role;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

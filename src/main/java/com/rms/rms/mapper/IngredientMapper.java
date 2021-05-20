@@ -8,6 +8,7 @@ import com.rms.rms.entity.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
@@ -15,18 +16,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class IngredientMapper {
 
-    private final ModelMapperBean modelMapperBean;
+    private final ModelMapper modelMapper;
 
     public Ingredient createDtoToEntity(IngredientCreateDto ingredient) {
-        return modelMapperBean.modelMapper().map(ingredient, Ingredient.class);
+        return modelMapper.map(ingredient, Ingredient.class);
     }
 
     public IngredientResponseDto entityToResponseDto(Ingredient ingredient) {
-        return modelMapperBean.modelMapper().map(ingredient, IngredientResponseDto.class);
+        return modelMapper.map(ingredient, IngredientResponseDto.class);
     }
 
     public Ingredient updateDtoToEntity(IngredientUpdateDto ingredient) {
-        return modelMapperBean.modelMapper().map(ingredient, Ingredient.class);
+        return modelMapper.map(ingredient, Ingredient.class);
     }
 
 }

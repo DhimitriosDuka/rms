@@ -1,4 +1,4 @@
-package com.rms.rms.entity;
+package com.rms.rms.entity.embedded;
 
 import lombok.*;
 

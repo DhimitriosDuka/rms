@@ -5,31 +5,31 @@ import com.rms.rms.dto.menu.item.MenuItemResponseDto;
 import com.rms.rms.dto.menu.item.MenuItemUpdateDto;
 import com.rms.rms.entity.MenuItem;
 import com.rms.rms.entity.MenuItemIngredient;
-import com.rms.rms.entity.MenuItemIngredientId;
+import com.rms.rms.entity.embedded.MenuItemIngredientId;
 import com.rms.rms.exception.MenuItemException;
 import com.rms.rms.mapper.MenuItemMapper;
 import com.rms.rms.repository.MenuItemIngredientRepository;
 import com.rms.rms.repository.MenuItemRepository;
 import com.rms.rms.service.MenuItemService;
-import com.rms.rms.service.SuperService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MenuItemServiceImpl extends SuperService implements MenuItemService {
+public class MenuItemServiceImpl implements MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
     private final MenuItemMapper menuItemMapper;
     private final MenuItemIngredientRepository menuItemIngredientRepository;
 
     @Override
-    public MenuItemResponseDto save(MenuItemCreateDto menuItem) {
-        checkNullabilityOfParameters(menuItem);
+    public MenuItemResponseDto save(@Valid MenuItemCreateDto menuItem) {
         menuItemRepository.findByName(menuItem.getName())
                 .ifPresent(value -> {
                         throw new MenuItemException("Menu item with name: " + menuItem.getName() + " already exists!");
@@ -46,8 +46,7 @@ public class MenuItemServiceImpl extends SuperService implements MenuItemService
     }
 
     @Override
-    public MenuItemResponseDto findById(Long id) {
-        checkNullabilityOfParameters(id);
+    public MenuItemResponseDto findById(@NotNull Long id) {
         return Optional.of(menuItemRepository.findById(id))
                 .get()
                 .map(menuItemMapper::entityToResponseDto)
@@ -55,8 +54,7 @@ public class MenuItemServiceImpl extends SuperService implements MenuItemService
     }
 
     @Override
-    public MenuItemResponseDto update(Long id, MenuItemUpdateDto menuItem) {
-        checkNullabilityOfParameters(id, menuItem);
+    public MenuItemResponseDto update(@NotNull Long id, @Valid MenuItemUpdateDto menuItem) {
         existsByNameWithDifferentId(id, menuItem.getName());
         MenuItem menuItemEntity = menuItemMapper.updateDtoToEntity(menuItem);
         menuItemEntity.setId(id);
@@ -64,8 +62,7 @@ public class MenuItemServiceImpl extends SuperService implements MenuItemService
     }
 
     @Override
-    public MenuItemResponseDto addIngredientToMenuItem(Long menuItemId, MenuItemIngredient menuItemIngredient) {
-        checkNullabilityOfParameters(menuItemId, menuItemIngredient);
+    public MenuItemResponseDto addIngredientToMenuItem(@NotNull Long menuItemId, @Valid MenuItemIngredient menuItemIngredient) {
         MenuItem menuItemWithId = (MenuItem) validateParametersAndGetObjectBasedOnString(menuItemId, menuItemIngredient.getIngredient().getId(), "MenuItem");
         menuItemIngredient.setMenuItemIngredientId(new MenuItemIngredientId(menuItemId, menuItemIngredient.getIngredient().getId()));
         menuItemIngredient.setMenuItem(menuItemWithId);
@@ -74,15 +71,13 @@ public class MenuItemServiceImpl extends SuperService implements MenuItemService
     }
 
     @Override
-    public void deleteIngredientFromMenuItem(Long menuItemId, Long ingredientId) {
-        checkNullabilityOfParameters(menuItemId, ingredientId);
+    public void deleteIngredientFromMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId) {
         validateParametersAndGetObjectBasedOnString(menuItemId, ingredientId, "");
         menuItemIngredientRepository.deleteByMenuItemIngredientId(new MenuItemIngredientId(ingredientId, menuItemId));
     }
 
     @Override
-    public MenuItemResponseDto updateIngredientAmountOfMenuItem(Long menuItemId, Long ingredientId, Integer amount) {
-        checkNullabilityOfParameters(menuItemId, ingredientId, amount);
+    public MenuItemResponseDto updateIngredientAmountOfMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId, @NotNull Integer amount) {
         MenuItemIngredient exist = (MenuItemIngredient) validateParametersAndGetObjectBasedOnString(menuItemId, ingredientId, "MenuItemIngredient");
         exist.setAmount(amount);
         menuItemIngredientRepository.save(exist);

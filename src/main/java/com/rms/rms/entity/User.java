@@ -29,13 +29,12 @@ public class User {
     @NotBlank(message = "Username must not be blank!")
     private String userName;
 
-    @Email
+    @Email(message = "Please provide a valid email!")
     private String email;
 
     @Password
     private String password;
 
-    @NotBlank(message = "Phone number must not be blank!")
     @PhoneNumber
     private String telephoneNumber;
 
