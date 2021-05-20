@@ -1,0 +1,21 @@
+package com.rms.rms.dto.user;
+
+import com.rms.rms.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class UserCreateDto {
+
+    private String firstName;
+    private String lastName;
+    private String userName;
+    private String email;
+    private String password;
+    private String telephoneNumber;
+    private String address;
+    private Role role;
+
+}
