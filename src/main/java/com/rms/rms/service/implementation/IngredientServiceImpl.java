@@ -5,11 +5,9 @@ import com.rms.rms.dto.ingredient.IngredientResponseDto;
 import com.rms.rms.dto.ingredient.IngredientUpdateDto;
 import com.rms.rms.entity.Ingredient;
 import com.rms.rms.exception.IngredientException;
-import com.rms.rms.exception.NullParameterException;
 import com.rms.rms.mapper.IngredientMapper;
 import com.rms.rms.repository.IngredientsRepository;
 import com.rms.rms.service.IngredientService;
-import com.rms.rms.service.SuperService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +19,13 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class IngredientServiceImpl extends SuperService implements IngredientService {
+public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientsRepository ingredientsRepository;
     public final IngredientMapper ingredientMapper;
 
     @Override
     public IngredientResponseDto save(@Valid IngredientCreateDto ingredient) {
-        checkNullabilityOfParameters(ingredient);
         Ingredient entityIngredient = ingredientMapper.createDtoToEntity(ingredient);
         ingredientsRepository.findByName(entityIngredient.getName())
                 .ifPresent(value -> {
@@ -47,7 +44,6 @@ public class IngredientServiceImpl extends SuperService implements IngredientSer
 
     @Override
     public IngredientResponseDto findById(@NotNull Long id) {
-        checkNullabilityOfParameters(id);
         return Optional.of(ingredientsRepository.findById(id))
                     .get()
                     .map(ingredientMapper::entityToResponseDto)
@@ -56,9 +52,6 @@ public class IngredientServiceImpl extends SuperService implements IngredientSer
 
     @Override
     public IngredientResponseDto update(@NotNull Long id, @Valid IngredientUpdateDto ingredient) {
-
-        checkNullabilityOfParameters(id, ingredient);
-
         if(doesNotExistsById(id)) {
             throw new IngredientException("Ingredient with id: " + id + " does not exists!");
         }

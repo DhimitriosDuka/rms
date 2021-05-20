@@ -5,7 +5,6 @@ import com.rms.rms.entity.User;
 import com.rms.rms.exception.UserException;
 import com.rms.rms.mapper.UserMapper;
 import com.rms.rms.repository.UserRepository;
-import com.rms.rms.service.SuperService;
 import com.rms.rms.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

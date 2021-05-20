@@ -1,7 +1,7 @@
 package com.rms.rms.repository;
 
 import com.rms.rms.entity.MenuItemIngredient;
-import com.rms.rms.entity.MenuItemIngredientId;
+import com.rms.rms.entity.embedded.MenuItemIngredientId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
