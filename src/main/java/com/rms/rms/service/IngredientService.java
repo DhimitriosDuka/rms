@@ -5,13 +5,16 @@ import com.rms.rms.dto.ingredient.IngredientResponseDto;
 import com.rms.rms.dto.ingredient.IngredientUpdateDto;
 import com.rms.rms.entity.Ingredient;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface IngredientService {
 
-    IngredientResponseDto save(IngredientCreateDto ingredient);
+    IngredientResponseDto save(@Valid IngredientCreateDto ingredient);
     List<IngredientResponseDto> findAll();
-    IngredientResponseDto findById(Long id);
-    IngredientResponseDto update(Long id, IngredientUpdateDto ingredient);
+    IngredientResponseDto findById(@NotNull Long id);
+    IngredientResponseDto update(@NotNull Long id, @Valid IngredientUpdateDto ingredient);
+
 
 }

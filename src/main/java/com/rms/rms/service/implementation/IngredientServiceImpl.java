@@ -9,24 +9,26 @@ import com.rms.rms.exception.NullParameterException;
 import com.rms.rms.mapper.IngredientMapper;
 import com.rms.rms.repository.IngredientsRepository;
 import com.rms.rms.service.IngredientService;
+import com.rms.rms.service.SuperService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class IngredientServiceImpl implements IngredientService {
+public class IngredientServiceImpl extends SuperService implements IngredientService {
 
     private final IngredientsRepository ingredientsRepository;
     public final IngredientMapper ingredientMapper;
 
     @Override
-    public IngredientResponseDto save(IngredientCreateDto ingredient) {
+    public IngredientResponseDto save(@Valid IngredientCreateDto ingredient) {
         checkNullabilityOfParameters(ingredient);
-
         Ingredient entityIngredient = ingredientMapper.createDtoToEntity(ingredient);
         ingredientsRepository.findByName(entityIngredient.getName())
                 .ifPresent(value -> {
@@ -44,7 +46,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public IngredientResponseDto findById(Long id) {
+    public IngredientResponseDto findById(@NotNull Long id) {
         checkNullabilityOfParameters(id);
         return Optional.of(ingredientsRepository.findById(id))
                     .get()
@@ -53,7 +55,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public IngredientResponseDto update(Long id, IngredientUpdateDto ingredient) {
+    public IngredientResponseDto update(@NotNull Long id, @Valid IngredientUpdateDto ingredient) {
 
         checkNullabilityOfParameters(id, ingredient);
 
@@ -79,9 +81,4 @@ public class IngredientServiceImpl implements IngredientService {
         return !ingredientsRepository.existsById(id);
     }
 
-    private void checkNullabilityOfParameters(Object... objects) {
-        for (Object o : objects) {
-            if(Objects.isNull(o)) throw new NullParameterException("Parameter/s must not be null!");
-        }
-    }
 }
