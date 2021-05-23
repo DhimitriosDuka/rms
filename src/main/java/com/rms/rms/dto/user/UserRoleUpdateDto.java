@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @Data
 public class UserRoleUpdateDto {
 
-    @NotBlank(message = "Role must not be blank.")
+    @NotNull(message = "Role must not be blank.")
     private Role role;
 
 }

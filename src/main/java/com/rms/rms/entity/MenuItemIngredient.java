@@ -8,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-
 @Entity
 @Table(name = "menu_item_ingredient")
 @Data
@@ -22,11 +21,11 @@ public class MenuItemIngredient {
     @JsonIgnore
     private MenuItem menuItem;
 
-    @ManyToOne
+    @ManyToOne()
     @MapsId("ingredientId")
     private Ingredient ingredient;
 
-    @NotBlank(message = "Amount must not be blank!")
+    @NotNull(message = "Amount must not be null!")
     private Integer amount;
 
 }

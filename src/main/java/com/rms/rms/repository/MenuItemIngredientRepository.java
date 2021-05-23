@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface MenuItemIngredientRepository extends JpaRepository<MenuItemIngredient, MenuItemIngredientId> {
-    Optional<MenuItemIngredient> findByMenuItemIngredientIdIngredientIdAndMenuItemIngredientIdMenuItemId(Long menuItemIngredientIdIngredientId, Long menuItemIngredientIdMenuItemId);
+
+    Optional<MenuItemIngredient> findByMenuItemIngredientId(MenuItemIngredientId menuItemIngredientId);
 
     @Transactional
     void deleteByMenuItemIngredientId(MenuItemIngredientId menuItemIngredientId);

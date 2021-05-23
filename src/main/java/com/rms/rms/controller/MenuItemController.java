@@ -2,6 +2,7 @@ package com.rms.rms.controller;
 
 import com.rms.rms.dto.menu.item.MenuItemCreateDto;
 import com.rms.rms.dto.menu.item.MenuItemResponseDto;
+import com.rms.rms.dto.menu.item.MenuItemUpdateAmountDto;
 import com.rms.rms.dto.menu.item.MenuItemUpdateDto;
 import com.rms.rms.entity.MenuItemIngredient;
 import com.rms.rms.service.MenuItemService;
@@ -51,7 +52,7 @@ public class MenuItemController {
     }
 
     @PutMapping(Path.MENU_ID_INGREDIENT)
-    public ResponseEntity<MenuItemResponseDto> updateAmountOfIngredientAtMenuItem(@PathVariable Long ingredientId, @PathVariable Long menuItemId, @RequestParam Integer amount) {
+    public ResponseEntity<MenuItemResponseDto> updateAmountOfIngredientAtMenuItem(@PathVariable Long ingredientId, @PathVariable Long menuItemId, @RequestBody MenuItemUpdateAmountDto amount) {
         return new ResponseEntity<>(menuItemService.updateIngredientAmountOfMenuItem(menuItemId, ingredientId, amount), HttpStatus.CREATED);
     }
 
