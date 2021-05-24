@@ -2,22 +2,24 @@ package com.rms.rms.service.implementation;
 
 import com.rms.rms.dto.user.*;
 import com.rms.rms.entity.User;
+import com.rms.rms.enums.Role;
 import com.rms.rms.exception.UserException;
 import com.rms.rms.mapper.UserMapper;
 import com.rms.rms.repository.UserRepository;
 import com.rms.rms.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
+@Validated
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -51,17 +53,22 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto update(@NotNull Long id, @Valid UserUpdateDto user) {
         User userToBeUpdated = getUserById(id);
 
-        Optional<User> userWithUsername = userRepository.findByUserName(user.getUserName());
-        if(userWithUsername.isPresent() && !userWithUsername.get().getId().equals(id)) {
-            throw new UserException("User with username: " + user.getUserName() + " already exists!");
-        }
+        userRepository.findByUserName(user.getUserName())
+                        .ifPresent(value -> {
+                            if(!value.getId().equals(id)) {
+                                throw new UserException("User with username: " + user.getUserName() + " already exists!");
+                            }
+                        });
 
-        Optional<User> userWithEmail = userRepository.findByEmail(user.getEmail());
-        if(userWithEmail.isPresent() && !userWithEmail.get().getId().equals(id)) {
-            throw new UserException("User with email: " + user.getEmail() + " already exists!");
-        }
+
+        userRepository.findByEmail(user.getEmail())
+                        .ifPresent(value -> {
+                            if(!value.getId().equals(id)) {
+                                throw new UserException("User with email: " + user.getEmail() + " already exists!");
+                            }
+                        });
+
         updateFields(user, userToBeUpdated);
-
         return userMapper.entityToResponseDto(userRepository.save(userToBeUpdated));
 
     }
