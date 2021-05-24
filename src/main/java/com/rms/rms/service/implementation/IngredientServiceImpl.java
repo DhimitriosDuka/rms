@@ -10,6 +10,7 @@ import com.rms.rms.repository.IngredientsRepository;
 import com.rms.rms.service.IngredientService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Validated
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientsRepository ingredientsRepository;
@@ -26,12 +28,11 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public IngredientResponseDto save(@Valid IngredientCreateDto ingredient) {
-        Ingredient entityIngredient = ingredientMapper.createDtoToEntity(ingredient);
-        ingredientsRepository.findByName(entityIngredient.getName())
+        ingredientsRepository.findByName(ingredient.getName())
                 .ifPresent(value -> {
                     throw new IngredientException("Ingredient with name: " + value.getName() + " already exists!");
                 });
-        return ingredientMapper.entityToResponseDto(ingredientsRepository.save(entityIngredient));
+        return ingredientMapper.entityToResponseDto(ingredientsRepository.save(ingredientMapper.createDtoToEntity(ingredient)));
     }
 
     @Override
@@ -44,34 +45,28 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public IngredientResponseDto findById(@NotNull Long id) {
-        return Optional.of(ingredientsRepository.findById(id))
-                    .get()
+        return ingredientsRepository.findById(id)
                     .map(ingredientMapper::entityToResponseDto)
                     .orElseThrow(() -> new IngredientException("Ingredient with id: " + id + " does not exists!"));
     }
 
     @Override
     public IngredientResponseDto update(@NotNull Long id, @Valid IngredientUpdateDto ingredient) {
-        if(doesNotExistsById(id)) {
-            throw new IngredientException("Ingredient with id: " + id + " does not exists!");
-        }
+        ingredientsRepository.findById(id)
+                .orElseThrow(() -> new IngredientException("Ingredient with id: " + id + " does not exists!"));
 
         Ingredient entityIngredient = ingredientMapper.updateDtoToEntity(ingredient);
 
-        Optional<Ingredient> existingIngredientWithName = ingredientsRepository.findByName(entityIngredient.getName());
-        if(existingIngredientWithName.isPresent()) {
-            Ingredient ingredientOptionalValue = existingIngredientWithName.get();
-            if(!ingredientOptionalValue.getId().equals(id)) {
-                throw new IngredientException("Ingredient with name: " + ingredientOptionalValue.getName() + " already exists!");
-            }
-        }
+        ingredientsRepository.findByName(entityIngredient.getName())
+                .ifPresent(value -> {
+                    if(!value.getId().equals(id)) {
+                        throw new IngredientException("Ingredient with name: " + value.getName() + " already exists!");
+                    }
+                });
         entityIngredient.setId(id);
         entityIngredient.setUpdatedAt(LocalDateTime.now());
         return ingredientMapper.entityToResponseDto(ingredientsRepository.save(entityIngredient));
-    }
 
-    private boolean doesNotExistsById(Long id) {
-        return !ingredientsRepository.existsById(id);
     }
 
 }
