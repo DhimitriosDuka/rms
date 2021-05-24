@@ -2,6 +2,7 @@ package com.rms.rms.dto.menu.item;
 
 import com.rms.rms.enums.Category;
 import com.rms.rms.enums.Course;
+import com.rms.rms.enums.Currency;
 import com.rms.rms.enums.Type;
 import lombok.Data;
 
@@ -29,6 +30,10 @@ public class MenuItemCreateDto {
 
     @NotNull(message = "Type must not be null!")
     private Type type;
+
+    @NotNull(message = "Currency must not be null!")
+    private Currency currency;
+
     private Category category;
 
 }

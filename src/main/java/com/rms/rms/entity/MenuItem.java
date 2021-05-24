@@ -3,6 +3,7 @@ package com.rms.rms.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rms.rms.enums.Category;
 import com.rms.rms.enums.Course;
+import com.rms.rms.enums.Currency;
 import com.rms.rms.enums.Type;
 import lombok.Data;
 
@@ -37,11 +38,22 @@ public class MenuItem {
 
     @NotNull(message = "Type must not be null!")
     private Type type;
+
+    @NotNull(message = "Currency must not be null!")
+    private Currency currency;
+
     private Category category;
+
     private Boolean available;
+
+    private Double calories;
 
     @OneToMany(mappedBy = "menuItem")
     private List<MenuItemIngredient> menuItemIngredientList;
+
+    @OneToMany(mappedBy = "menuItem")
+    @JsonIgnore
+    private List<OrderMenuItem> orderMenuItems;
 
 
 }
