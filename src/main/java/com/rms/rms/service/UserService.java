@@ -1,18 +1,14 @@
 package com.rms.rms.service;
 
 import com.rms.rms.dto.user.*;
-import com.rms.rms.enums.Role;
+import com.rms.rms.entity.User;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
-public interface UserService {
+public interface UserService extends BaseService<UserCreateDto, UserUpdateDto, UserResponseDto, User>{
 
-    UserResponseDto save(@Valid UserCreateDto user);
-    List<UserResponseDto> findAll();
-    UserResponseDto update(@NotNull Long id, @Valid UserUpdateDto user);
-    UserResponseDto findById(@NotNull Long id);
+    UserResponseDto update(Long id, UserUpdateDto updateDto);
     void delete(@NotNull Long id);
     UserResponseDto updateRole(@NotNull Long id, @Valid UserRoleUpdateDto role);
     void updatePassword(@NotNull Long id, @Valid UserUpdatePasswordDto password);
