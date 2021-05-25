@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "ingredient")
+@Table(name = "ingredient", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

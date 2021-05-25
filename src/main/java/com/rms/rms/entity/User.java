@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"userName", "email"}))
 @Data
 public class User {
 
@@ -44,9 +44,10 @@ public class User {
     @NotNull(message = "Role must not be null.")
     private Role role;
 
-    private Boolean active;
+    private Boolean active = Boolean.TRUE;
 
-    private LocalDate createdAt;
+    @Column(updatable = false)
+    private LocalDate createdAt = LocalDate.now();
 
     private LocalDate updatedAt;
 
