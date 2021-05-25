@@ -9,12 +9,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public interface IngredientService {
+public interface IngredientService extends BaseService<IngredientCreateDto, IngredientUpdateDto, IngredientResponseDto, Ingredient> {
 
-    IngredientResponseDto save(@Valid IngredientCreateDto ingredient);
-    List<IngredientResponseDto> findAll();
-    IngredientResponseDto findById(@NotNull Long id);
-    IngredientResponseDto update(@NotNull Long id, @Valid IngredientUpdateDto ingredient);
-
+    IngredientResponseDto update(Long id, IngredientUpdateDto updateDto);
 
 }
