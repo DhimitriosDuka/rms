@@ -9,6 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
-    Optional<MenuItem> findByName(String name);
-    List<MenuItem> findAllByAvailableTrue();
 }

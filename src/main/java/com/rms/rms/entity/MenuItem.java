@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "menu_item")
+@Table(name = "menu_item",  uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @Data
 public class MenuItem {
 
@@ -44,9 +44,9 @@ public class MenuItem {
 
     private Category category;
 
-    private Boolean available;
+    private Boolean available = Boolean.TRUE;
 
-    private Double calories;
+    private Double calories = 0.0;
 
     @OneToMany(mappedBy = "menuItem")
     private List<MenuItemIngredient> menuItemIngredientList;
