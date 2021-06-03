@@ -1,5 +1,8 @@
 package com.rms.rms.service;
 
+import com.rms.rms.dto.schedule.ScheduleCreateDto;
+import com.rms.rms.dto.schedule.ScheduleResponseDto;
+import com.rms.rms.dto.schedule.ScheduleUpdateDto;
 import com.rms.rms.dto.user.*;
 import com.rms.rms.entity.User;
 
@@ -10,7 +13,9 @@ public interface UserService extends BaseService<UserCreateDto, UserUpdateDto, U
 
     UserResponseDto update(Long id, UserUpdateDto updateDto);
     void delete(@NotNull Long id);
-    UserResponseDto updateRole(@NotNull Long id, @Valid UserRoleUpdateDto role);
     void updatePassword(@NotNull Long id, @Valid UserUpdatePasswordDto password);
+    ScheduleResponseDto addScheduleToDeliveryGuy(Long id, ScheduleCreateDto schedule);
+    ScheduleResponseDto updateScheduleOfDeliveryGuy(Long userId, ScheduleUpdateDto schedule);
+
 
 }

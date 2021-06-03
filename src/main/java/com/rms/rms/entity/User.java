@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"userName", "email"}))
@@ -51,5 +52,13 @@ public class User {
 
     private LocalDate updatedAt;
 
+    @OneToMany(mappedBy = "costumer")
+    private List<Order> costumerOrders;
+
+    @OneToMany(mappedBy = "deliveryGuy")
+    private List<Order> deliveryGuyOrders;
+
+    @OneToMany(mappedBy = "user")
+    private List<Schedule> schedules;
 
 }
