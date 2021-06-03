@@ -67,5 +67,10 @@ CREATE TABLE orders_menu_items (
 	PRIMARY KEY(menu_item_id, order_id)
 );
 
-
-
+CREATE TABLE schedule(
+     id SERIAL PRIMARY KEY,
+     work_date DATE NOT NULL,
+     start_work_hour TIMESTAMP WITH TIME ZONE NOT NULL,
+     end_work_hour TIMESTAMP WITH TIME ZONE NOT NULL,
+     user_id BIGINT REFERENCES users(id)
+);
