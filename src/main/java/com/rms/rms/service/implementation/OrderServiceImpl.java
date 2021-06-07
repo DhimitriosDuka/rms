@@ -8,7 +8,9 @@ import com.rms.rms.entity.OrderMenuItem;
 import com.rms.rms.entity.embedded.OrderMenuItemId;
 import com.rms.rms.enums.Status;
 import com.rms.rms.exception.OrderException;
+import com.rms.rms.filters.OrderFilter;
 import com.rms.rms.repository.OrderMenuItemRepository;
+import com.rms.rms.repository.OrderRepository;
 import com.rms.rms.repository.UserRepository;
 import com.rms.rms.service.OrderService;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -25,6 +28,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
 
     private final OrderMenuItemRepository orderMenuItemRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     public OrderResponseDto save(OrderCreateDto order) {
@@ -126,6 +130,16 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
     @Override
     public void deleteMenuItemFromOrder(Long orderId, Long menuItemId) {
         orderMenuItemRepository.deleteById(new OrderMenuItemId(orderId, menuItemId));
+    }
+
+    @Override
+    public List<OrderResponseDto> findAllByFilter(OrderFilter orderFilter) {
+
+        return orderRepository.findAllByFilter(orderFilter)
+                .stream()
+                .map(baseMapper::entityToResponseDto)
+                .collect(Collectors.toList());
+
     }
 
     private OrderMenuItem generateOrderMenuItemEntity(Long orderId, OrderMenuItem order, Order orderWithId) {
