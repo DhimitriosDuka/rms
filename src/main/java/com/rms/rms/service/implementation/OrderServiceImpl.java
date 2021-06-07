@@ -14,6 +14,9 @@ import com.rms.rms.service.OrderService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
 
 
 @Service
@@ -28,7 +31,16 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
         Order orderEntity = baseMapper.createDtoToEntity(order);
 
         orderEntity.setCostumer(userRepository.getOne(3L));
-        orderEntity.setDeliveryGuy(userRepository.getOne(3L));
+
+        List<Integer> availableDeliveryGuys = userRepository.findAllAvailableDeliveryGuys();
+
+        if(!availableDeliveryGuys.isEmpty()) {
+            int randomIndex = new Random().nextInt(availableDeliveryGuys.size());
+            orderEntity.setDeliveryGuy(userRepository.getOne((long) availableDeliveryGuys.get(randomIndex)));
+        } else {
+            orderEntity.setDeliveryGuy(userRepository.findDeliveryGuyWithClosestDeliveryTime());
+        }
+        System.out.println(availableDeliveryGuys.size());
 
         orderEntity.setTotalCalories(
           orderEntity.getOrderMenuItems().stream()
@@ -75,7 +87,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
 
     @Override
     public OrderResponseDto updateStatus(Long id, UpdateStatusDto status) {
-
         return baseMapper.entityToResponseDto(
                 jpaRepository.findById(id)
                     .map(value -> {
@@ -83,6 +94,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
                             throw new OrderException("Order with id: " + id + " has status DELIVERED and cannot be changed!");
                         }
                         value.setStatus(status.getStatus());
+                        if(value.getStatus().equals(Status.DELIVERED)) value.setDeliveryTime(LocalDateTime.now());
                         return jpaRepository.save(value);
                     })
                     .orElseThrow(() -> {

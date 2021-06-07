@@ -28,7 +28,7 @@ public class MenuItemController {
 
     @GetMapping
     public ResponseEntity<List<MenuItemResponseDto>> getAll() {
-        return new ResponseEntity<>(menuItemService.findAllAvailable(), HttpStatus.OK);
+        return new ResponseEntity<>(menuItemService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping(Path.ID)
