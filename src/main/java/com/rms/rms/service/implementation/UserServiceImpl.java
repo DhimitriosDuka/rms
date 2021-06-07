@@ -12,12 +12,15 @@ import com.rms.rms.exception.UserException;
 import com.rms.rms.mapper.ScheduleMapper;
 import com.rms.rms.repository.OrderRepository;
 import com.rms.rms.repository.ScheduleRepository;
+import com.rms.rms.repository.UserRepository;
 import com.rms.rms.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -27,6 +30,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
     private final ScheduleRepository scheduleRepository;
     private final ScheduleMapper scheduleMapper;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserResponseDto update(Long id, UserUpdateDto user) {
@@ -86,6 +90,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
         return scheduleRepository.findById(scheduleId)
                 .map(value -> scheduleMapper.entityToResponseDto(scheduleRepository.save(scheduleMapper.getUpdatedSchedule(value, schedule))))
                 .orElseThrow(() -> new ScheduleException("Schedule with id: " + scheduleId + " does not exist!"));
+    }
+
+    @Override
+    public List<UserResponseDto> findTopCustomers(Integer n) {
+        return userRepository.findTopCustomers(n)
+                .stream()
+                .map(id -> baseMapper.entityToResponseDto(jpaRepository.getOne(id)))
+                .collect(Collectors.toList());
     }
 
     private User getUserById(Long id) {

@@ -9,6 +9,7 @@ public class Path {
 
     public static final String ID = "/{id}";
     public static final String INGREDIENT_PATH = "/ingredients";
+    public static final String TOP_N_PATH = "/top/{n}";
     public static final String USER_PATH = "/users";
     public static final String MENU_ITEM_PATH = "/menuItems";
     public static final String ORDER_PATH = "/orders";

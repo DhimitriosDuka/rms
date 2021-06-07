@@ -8,6 +8,7 @@ import com.rms.rms.entity.User;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public interface UserService extends BaseService<UserCreateDto, UserUpdateDto, UserResponseDto, User>{
 
@@ -16,6 +17,6 @@ public interface UserService extends BaseService<UserCreateDto, UserUpdateDto, U
     void updatePassword(@NotNull Long id, @Valid UserUpdatePasswordDto password);
     ScheduleResponseDto addScheduleToDeliveryGuy(Long id, ScheduleCreateDto schedule);
     ScheduleResponseDto updateScheduleOfDeliveryGuy(Long userId, ScheduleUpdateDto schedule);
-
+    List<UserResponseDto> findTopCustomers(Integer n);
 
 }

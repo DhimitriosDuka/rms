@@ -60,4 +60,9 @@ public class UserController {
         return new ResponseEntity<>(userService.updateScheduleOfDeliveryGuy(scheduleId, schedule), HttpStatus.OK);
     }
 
+    @GetMapping(Path.TOP_N_PATH)
+    public ResponseEntity<List<UserResponseDto>> findTopCustomers(@PathVariable Integer n) {
+        return new ResponseEntity<>(userService.findTopCustomers(n), HttpStatus.OK);
+    }
+
 }
