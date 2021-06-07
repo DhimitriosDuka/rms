@@ -8,7 +8,10 @@ import com.rms.rms.entity.MenuItem;
 import com.rms.rms.entity.MenuItemIngredient;
 import com.rms.rms.entity.embedded.MenuItemIngredientId;
 import com.rms.rms.exception.MenuItemException;
+import com.rms.rms.filters.MenuItemFilter;
 import com.rms.rms.repository.MenuItemIngredientRepository;
+import com.rms.rms.repository.MenuItemRepository;
+import com.rms.rms.repository.OrderMenuItemRepository;
 import com.rms.rms.service.MenuItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,6 +29,8 @@ import javax.validation.constraints.NotNull;
 public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, MenuItemUpdateDto, MenuItemResponseDto, MenuItem> implements MenuItemService {
 
     private final MenuItemIngredientRepository menuItemIngredientRepository;
+    private final OrderMenuItemRepository orderMenuItemRepository;
+    private final MenuItemRepository menuItemRepository;
 
     @Override
     public MenuItemResponseDto update(@NotNull Long id, @Valid MenuItemUpdateDto menuItem) {
@@ -76,6 +83,22 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
         menuItemIngredientRepository.save(menuItemIngredient);
         return baseMapper.entityToResponseDto(jpaRepository.findById(menuItemId).get());
 
+    }
+
+    @Override
+    public List<MenuItemResponseDto> findTopIngredients(Integer n) {
+        return orderMenuItemRepository.findTopMenuItems(n)
+                .stream()
+                .map(id -> baseMapper.entityToResponseDto(jpaRepository.getOne(id)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MenuItemResponseDto> findAllByFilter(MenuItemFilter menuItemFilter) {
+        return menuItemRepository.findAllByFilter(menuItemFilter)
+                .stream()
+                .map(baseMapper::entityToResponseDto)
+                .collect(Collectors.toList());
     }
 
     private MenuItemIngredient getMenuItemIngredient(@NotNull Long menuItemId, @NotNull Long ingredientId, MenuItemIngredientId menuItemIngredientId) {

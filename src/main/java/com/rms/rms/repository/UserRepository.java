@@ -41,4 +41,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         "LIMIT 1", nativeQuery = true)
     User findDeliveryGuyWithClosestDeliveryTime();
 
+    @Query(value = "SELECT users.id, COUNT(users.id) as a\n" +
+                        "FROM users\n" +
+                        "LEFT JOIN orders ON orders.costumer_id = users.id\n" +
+                        "WHERE users.role = '1'\n" +
+                        "GROUP BY users.id\n" +
+                        "ORDER BY COUNT(users.id) DESC\n" +
+                        "LIMIT ?\n", nativeQuery = true)
+    List<Long> findTopCustomers(Integer n);
+
+
 }

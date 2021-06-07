@@ -5,6 +5,8 @@ import com.rms.rms.dto.menu.item.MenuItemResponseDto;
 import com.rms.rms.dto.menu.item.MenuItemUpdateAmountDto;
 import com.rms.rms.dto.menu.item.MenuItemUpdateDto;
 import com.rms.rms.entity.MenuItemIngredient;
+import com.rms.rms.enums.Category;
+import com.rms.rms.filters.MenuItemFilter;
 import com.rms.rms.service.MenuItemService;
 import com.rms.rms.utils.Path;
 import lombok.AllArgsConstructor;
@@ -26,9 +28,9 @@ public class MenuItemController {
         return new ResponseEntity<>(menuItemService.save(menuItem), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<MenuItemResponseDto>> getAll() {
-        return new ResponseEntity<>(menuItemService.findAll(), HttpStatus.OK);
+    @PostMapping("/all")
+    public ResponseEntity<List<MenuItemResponseDto>> getAll(@RequestBody(required = false) MenuItemFilter menuItemFilter) {
+        return new ResponseEntity<>(menuItemService.findAllByFilter(menuItemFilter), HttpStatus.OK);
     }
 
     @GetMapping(Path.ID)
@@ -54,6 +56,11 @@ public class MenuItemController {
     @PutMapping(Path.MENU_ID_INGREDIENT)
     public ResponseEntity<MenuItemResponseDto> updateAmountOfIngredientAtMenuItem(@PathVariable Long ingredientId, @PathVariable Long menuItemId, @RequestBody MenuItemUpdateAmountDto amount) {
         return new ResponseEntity<>(menuItemService.updateIngredientAmountOfMenuItem(menuItemId, ingredientId, amount), HttpStatus.CREATED);
+    }
+
+    @GetMapping(Path.TOP_N_PATH)
+    public ResponseEntity<List<MenuItemResponseDto>> findTopMenuItems(@PathVariable Integer n) {
+        return new ResponseEntity<>(menuItemService.findTopIngredients(n), HttpStatus.OK);
     }
 
 

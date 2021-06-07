@@ -3,6 +3,7 @@ package com.rms.rms.controller;
 import com.rms.rms.dto.ingredient.IngredientCreateDto;
 import com.rms.rms.dto.ingredient.IngredientResponseDto;
 import com.rms.rms.dto.ingredient.IngredientUpdateDto;
+import com.rms.rms.filters.IngredientFilter;
 import com.rms.rms.mapper.IngredientMapper;
 import com.rms.rms.service.IngredientService;
 import com.rms.rms.utils.Path;
@@ -21,14 +22,14 @@ public class IngredientController {
     public final IngredientService ingredientService;
     public final IngredientMapper ingredientMapper;
 
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<IngredientResponseDto> save(@RequestBody IngredientCreateDto ingredient) {
         return new ResponseEntity<>(ingredientService.save(ingredient), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<IngredientResponseDto>> getAll() {
-        return new ResponseEntity<>(ingredientService.findAll(), HttpStatus.OK);
+    @PostMapping()
+    public ResponseEntity<List<IngredientResponseDto>> getAll(@RequestBody(required = false) IngredientFilter ingredientFilter) {
+        return new ResponseEntity<>(ingredientService.findAllByFilter(ingredientFilter), HttpStatus.OK);
     }
 
     @GetMapping(Path.ID)
@@ -39,6 +40,11 @@ public class IngredientController {
     @PutMapping(Path.ID)
     public ResponseEntity<IngredientResponseDto> update(@PathVariable Long id, @RequestBody IngredientUpdateDto ingredient) {
         return new ResponseEntity<>(ingredientService.update(id, ingredient), HttpStatus.CREATED);
+    }
+
+    @GetMapping(Path.TOP_N_PATH)
+    public ResponseEntity<List<IngredientResponseDto>> findTopIngredients(@PathVariable Integer n) {
+        return new ResponseEntity<>(ingredientService.findTopIngredients(n), HttpStatus.OK);
     }
 
 }
