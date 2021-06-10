@@ -4,6 +4,7 @@ import com.rms.rms.dto.order.OrderCreateDto;
 import com.rms.rms.dto.order.OrderResponseDto;
 import com.rms.rms.dto.order.UpdateStatusDto;
 import com.rms.rms.entity.OrderMenuItem;
+import com.rms.rms.filters.OrderFilter;
 import com.rms.rms.service.OrderService;
 import com.rms.rms.utils.Path;
 import lombok.AllArgsConstructor;
@@ -25,9 +26,9 @@ public class OrderController {
         return new ResponseEntity<>(orderService.save(order), HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<OrderResponseDto>> findAll() {
-        return new ResponseEntity<>(orderService.findAll(), HttpStatus.OK);
+    @PostMapping("/all")
+    public ResponseEntity<List<OrderResponseDto>> findAll(@RequestBody(required = false) OrderFilter orderFilter) {
+        return new ResponseEntity<>(orderService.findAllByFilter(orderFilter), HttpStatus.OK);
     }
 
     @PutMapping(Path.CANCEL_ORDER_PATH)

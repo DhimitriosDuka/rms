@@ -1,6 +1,7 @@
 package com.rms.rms.service.implementation;
 
 import com.rms.rms.mapper.BaseMapper;
+import com.rms.rms.repository.implemetations.BaseImpl;
 import com.rms.rms.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
