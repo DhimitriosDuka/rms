@@ -1,7 +1,9 @@
 package com.rms.rms.dto.order;
 
 
+import com.rms.rms.dto.user.UserResponseDto;
 import com.rms.rms.entity.OrderMenuItem;
+import com.rms.rms.entity.User;
 import com.rms.rms.enums.Status;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +23,7 @@ public class OrderResponseDto {
     private String address;
     private Double calories;
     private Double price;
-    private List<OrderMenuItem> orderMenuItems;
+    private List<OrderMenuItemResponseDto> orderMenuItems;
+    private UserResponseDto deliveryGuy;
 
 }

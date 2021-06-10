@@ -1,14 +1,12 @@
 package com.rms.rms.service.implementation;
 
-import com.rms.rms.dto.menu.item.MenuItemCreateDto;
-import com.rms.rms.dto.menu.item.MenuItemResponseDto;
-import com.rms.rms.dto.menu.item.MenuItemUpdateAmountDto;
-import com.rms.rms.dto.menu.item.MenuItemUpdateDto;
+import com.rms.rms.dto.menu.item.*;
 import com.rms.rms.entity.MenuItem;
 import com.rms.rms.entity.MenuItemIngredient;
 import com.rms.rms.entity.embedded.MenuItemIngredientId;
 import com.rms.rms.exception.MenuItemException;
 import com.rms.rms.filters.MenuItemFilter;
+import com.rms.rms.mapper.MenuItemMapper;
 import com.rms.rms.repository.MenuItemIngredientRepository;
 import com.rms.rms.repository.MenuItemRepository;
 import com.rms.rms.repository.OrderMenuItemRepository;
@@ -31,13 +29,12 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
     private final MenuItemIngredientRepository menuItemIngredientRepository;
     private final OrderMenuItemRepository orderMenuItemRepository;
     private final MenuItemRepository menuItemRepository;
+    private final MenuItemMapper menuItemMapper;
 
     @Override
     public MenuItemResponseDto update(@NotNull Long id, @Valid MenuItemUpdateDto menuItem) {
 
-        jpaRepository.findById(id)
-                .orElseThrow(() -> new MenuItemException("Menu item with id: " + id + " does not exist!"));
-
+        getMenuItem(id);
         MenuItem entityMenuItem = baseMapper.updateDtoToEntity(menuItem);
         entityMenuItem.setId(id);
         return baseMapper.entityToResponseDto(jpaRepository.save(entityMenuItem));
@@ -57,7 +54,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
         menuItemIngredient.setMenuItemIngredientId(menuItemIngredientId);
         menuItemIngredient.setMenuItem(menuItem);
         menuItemIngredientRepository.save(menuItemIngredient);
-        return baseMapper.entityToResponseDto(jpaRepository.save(menuItem));
+        return baseMapper.entityToResponseDto(jpaRepository.getOne(menuItem.getId()));
 
     }
 
@@ -66,7 +63,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
 
         MenuItem menuItem = getMenuItem(menuItemId);
         MenuItemIngredientId menuItemIngredientId = new MenuItemIngredientId(ingredientId, menuItemId);
-        MenuItemIngredient menuItemIngredient = getMenuItemIngredient(menuItemId, ingredientId, menuItemIngredientId);
+        MenuItemIngredient menuItemIngredient = getMenuItemIngredient(menuItemIngredientId);
 
         Double remainingCalories = menuItem.getCalories() - calculateCalories(menuItemIngredient);
         menuItem.setCalories(remainingCalories);
@@ -75,13 +72,12 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
     }
 
     @Override
-    public MenuItemResponseDto updateIngredientAmountOfMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId, @NotNull MenuItemUpdateAmountDto amount) {
+    public MenuItemIngredientResponseDto updateIngredientAmountOfMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId, @NotNull MenuItemUpdateAmountDto amount) {
 
         MenuItemIngredientId menuItemIngredientId = new MenuItemIngredientId(ingredientId, menuItemId);
-        MenuItemIngredient menuItemIngredient = getMenuItemIngredient(menuItemId, ingredientId, menuItemIngredientId);
+        MenuItemIngredient menuItemIngredient = getMenuItemIngredient(menuItemIngredientId);
         menuItemIngredient.setAmount(amount.getAmount());
-        menuItemIngredientRepository.save(menuItemIngredient);
-        return baseMapper.entityToResponseDto(jpaRepository.findById(menuItemId).get());
+        return menuItemMapper.convertMenuItemIngredientToResponseDto(menuItemIngredientRepository.save(menuItemIngredient));
 
     }
 
@@ -101,11 +97,11 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
                 .collect(Collectors.toList());
     }
 
-    private MenuItemIngredient getMenuItemIngredient(@NotNull Long menuItemId, @NotNull Long ingredientId, MenuItemIngredientId menuItemIngredientId) {
+    private MenuItemIngredient getMenuItemIngredient(MenuItemIngredientId menuItemIngredientId) {
         return menuItemIngredientRepository
                                         .findByMenuItemIngredientId(menuItemIngredientId)
                                         .orElseThrow(() -> {
-                                            throw new MenuItemException("Menu item with id: " + menuItemId + " does not have an ingredient with id: " + ingredientId);
+                                            throw new MenuItemException("Menu item with id: " + menuItemIngredientId.getMenuItemId() + " does not have an ingredient with id: " + menuItemIngredientId.getIngredientId());
                                         });
     }
 

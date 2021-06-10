@@ -44,7 +44,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
         } else {
             orderEntity.setDeliveryGuy(userRepository.findDeliveryGuyWithClosestDeliveryTime());
         }
-        System.out.println(availableDeliveryGuys.size());
 
         orderEntity.setTotalCalories(
           orderEntity.getOrderMenuItems().stream()

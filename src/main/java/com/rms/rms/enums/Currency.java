@@ -3,6 +3,8 @@ package com.rms.rms.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Random;
+
 @AllArgsConstructor
 @Getter
 public enum Currency {
@@ -28,5 +30,10 @@ public enum Currency {
     ALL ("Albanian lek");
 
     private final String currency;
+
+    public static Currency getRandomCurrency() {
+        Random random = new Random();
+        return values()[random.nextInt(values().length)];
+    }
 
 }
