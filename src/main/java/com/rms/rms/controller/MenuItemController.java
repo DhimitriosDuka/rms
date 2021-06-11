@@ -9,6 +9,7 @@ import com.rms.rms.utils.Path;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class MenuItemController {
 
     private final MenuItemService menuItemService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<MenuItemResponseDto> save(@RequestBody MenuItemCreateDto menuItem) {
         return new ResponseEntity<>(menuItemService.save(menuItem), HttpStatus.CREATED);
@@ -35,21 +37,25 @@ public class MenuItemController {
         return new ResponseEntity<>(menuItemService.findById(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(Path.ID)
     public ResponseEntity<MenuItemResponseDto> update(@PathVariable Long id, @RequestBody MenuItemUpdateDto menuItem) {
         return new ResponseEntity<>(menuItemService.update(id, menuItem), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(Path.ID)
     public ResponseEntity<MenuItemResponseDto> addIngredientToMenuItem(@PathVariable Long id, @RequestBody MenuItemIngredient menuItemIngredient) {
         return new ResponseEntity<>(menuItemService.addIngredientToMenuItem(id, menuItemIngredient), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(Path.MENU_ID_INGREDIENT)
     public void deleteIngredientFromMenuItem(@PathVariable Long menuItemId, @PathVariable Long ingredientId) {
         menuItemService.deleteIngredientFromMenuItem(menuItemId, ingredientId);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(Path.MENU_ID_INGREDIENT)
     public ResponseEntity<MenuItemIngredientResponseDto> updateAmountOfIngredientAtMenuItem(@PathVariable Long ingredientId, @PathVariable Long menuItemId, @RequestBody MenuItemUpdateAmountDto amount) {
         return new ResponseEntity<>(menuItemService.updateIngredientAmountOfMenuItem(menuItemId, ingredientId, amount), HttpStatus.CREATED);
