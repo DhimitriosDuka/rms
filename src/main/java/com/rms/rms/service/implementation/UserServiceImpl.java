@@ -46,6 +46,10 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
             throw new UserException("User with id: " + id + " is inactive!");
         }
 
+        if(userWithId.getRole().equals(Role.ADMIN)) {
+            throw new UserException("User with role admin cannot be deleted!");
+        }
+
         if(userWithId.getRole().equals(Role.OPERATOR)) {
             if(!orderRepository.getOrdersOfOperator(userWithId).isEmpty()) {
                 throw new UserException("User with id: " + id + " and role: " + Role.OPERATOR + " cannot be deleted!");
@@ -61,6 +65,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
 
         userWithId.setActive(Boolean.FALSE);
         setUpdatedAtField(userWithId);
+        jpaRepository.save(userWithId);
     }
 
     @Override
@@ -68,6 +73,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
         User userWithId = getUserById(id);
         userWithId.setPassword(password.getPassword());
         setUpdatedAtField(userWithId);
+        jpaRepository.save(userWithId);
     }
 
     @Override

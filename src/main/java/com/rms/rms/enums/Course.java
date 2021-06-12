@@ -3,6 +3,8 @@ package com.rms.rms.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Random;
+
 @AllArgsConstructor
 @Getter
 public enum Course {
@@ -21,4 +23,10 @@ public enum Course {
     POST_MEAL_DRINKS_AND_PASTRIES("Post-meal drinks and pastries");
 
     private final String course;
+
+    public static Course getRandomCourse() {
+        Random random = new Random();
+        return values()[random.nextInt(values().length)];
+    }
+
 }
