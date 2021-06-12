@@ -13,24 +13,49 @@ import com.rms.rms.mapper.ScheduleMapper;
 import com.rms.rms.repository.OrderRepository;
 import com.rms.rms.repository.ScheduleRepository;
 import com.rms.rms.repository.UserRepository;
+import com.rms.rms.security.entity.AuthenticationRequest;
+import com.rms.rms.security.entity.AuthenticationResponse;
+import com.rms.rms.security.util.JWTUtil;
 import com.rms.rms.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
 @Validated
 public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDto, UserResponseDto, User> implements UserService {
 
-    private final ScheduleRepository scheduleRepository;
-    private final ScheduleMapper scheduleMapper;
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private ScheduleMapper scheduleMapper;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JWTUtil jwtUtil;
+
+    @Autowired
+    @Lazy
+    private AuthenticationManager authenticationManager;
 
     @Override
     public UserResponseDto update(Long id, UserUpdateDto user) {
@@ -104,6 +129,37 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
                 .stream()
                 .map(id -> baseMapper.entityToResponseDto(jpaRepository.getOne(id)))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        return userRepository.findByUserName(username)
+                .map(user -> new org.springframework.security.core.userdetails.User(
+                        user.getUserName(),
+                        user.getPassword(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getRole()))
+                ))
+                .orElseThrow(() -> new BadCredentialsException("Bad Credentials!"));
+
+    }
+
+    @Override
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws Exception {
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    authenticationRequest.getUsername(),
+                    authenticationRequest.getPassword()
+            ));
+        }catch (BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+
+        UserDetails userDetails = loadUserByUsername(authenticationRequest.getUsername());
+        String token = jwtUtil.generateToken(userDetails);
+        return new AuthenticationResponse(token);
+
     }
 
     private User getUserById(Long id) {

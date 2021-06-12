@@ -19,6 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmailAndPassword(String email, String password);
     Optional<User> findByIdAndRole(Long id, Role role);
+    Optional<User> findByUserName(String userName);
 
     @Query(value = "SELECT users.id FROM users\n" +
                         "LEFT JOIN schedule ON schedule.user_id = users.id\n" +
