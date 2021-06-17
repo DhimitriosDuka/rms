@@ -5,6 +5,7 @@ import com.rms.rms.dto.ingredient.IngredientResponseDto;
 import com.rms.rms.dto.ingredient.IngredientUpdateDto;
 import com.rms.rms.entity.Ingredient;
 import com.rms.rms.filters.IngredientFilter;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

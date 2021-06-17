@@ -5,20 +5,22 @@ import com.rms.rms.enums.Category;
 import com.rms.rms.enums.Course;
 import com.rms.rms.enums.Currency;
 import com.rms.rms.enums.Type;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 
-@Data
+@Getter
+@Setter
 public class MenuItemUpdateDto {
 
     @NotBlank(message = "Name must not be blank!")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Price must not be null!")
     @Min(value = 0, message = "Price should be greater than or 0!")
     private Double price;
 
@@ -36,5 +38,8 @@ public class MenuItemUpdateDto {
     private Currency currency;
 
     private Category category;
+
+    @NotNull(message = "Available must not be null!")
+    private Boolean available;
 
 }

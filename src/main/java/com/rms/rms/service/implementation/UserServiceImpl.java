@@ -23,13 +23,16 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +59,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
     @Autowired
     @Lazy
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserResponseDto save(UserCreateDto entity) {
+        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+        return super.save(entity);
+    }
 
     @Override
     public UserResponseDto update(Long id, UserUpdateDto user) {
@@ -103,6 +115,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
 
     @Override
     public ScheduleResponseDto addScheduleToDeliveryGuy(Long id, ScheduleCreateDto schedule) {
+
+        if(isNotValidSchedule(schedule)) {
+            throw new ScheduleException("Please enter a valid schedule!");
+        }
+
         return scheduleMapper.entityToResponseDto(jpaRepository.findById(id)
                 .map(user -> {
                     if(!user.getRole().equals(Role.DELIVERY)) {
@@ -116,8 +133,17 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
         );
     }
 
+    private boolean isNotValidSchedule(ScheduleCreateDto schedule) {
+        return schedule.getEndWorkHour().isBefore(schedule.getStartWorkHour()) || schedule.getWorkDate().getDayOfMonth() != schedule.getStartWorkHour().getDayOfMonth() || schedule.getWorkDate().getMonth() != schedule.getStartWorkHour().getMonth();
+    }
+
     @Override
     public ScheduleResponseDto updateScheduleOfDeliveryGuy(Long scheduleId, ScheduleUpdateDto schedule) {
+
+        if(schedule.getEndWorkHour().isBefore(schedule.getStartWorkHour())) {
+            throw new ScheduleException("Please enter a valid exception!");
+        }
+
         return scheduleRepository.findById(scheduleId)
                 .map(value -> scheduleMapper.entityToResponseDto(scheduleRepository.save(scheduleMapper.getUpdatedSchedule(value, schedule))))
                 .orElseThrow(() -> new ScheduleException("Schedule with id: " + scheduleId + " does not exist!"));
@@ -140,7 +166,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
                         user.getPassword(),
                         Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().getRole()))
                 ))
-                .orElseThrow(() -> new BadCredentialsException("Bad Credentials!"));
+                .orElseThrow(() -> new BadCredentialsException("Bad credentials!"));
 
     }
 
@@ -152,13 +178,26 @@ public class UserServiceImpl extends BaseServiceImpl<UserCreateDto, UserUpdateDt
                     authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()
             ));
+            UserDetails userDetails = loadUserByUsername(authenticationRequest.getUsername());
+            String token = jwtUtil.generateToken(userDetails);
+
+            Role role = null;
+
+            Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
+            if (roles.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                role = Role.ADMIN;
+            }
+            if (roles.contains(new SimpleGrantedAuthority("ROLE_OPERATOR"))) {
+                role = Role.OPERATOR;
+            }
+            if (roles.contains(new SimpleGrantedAuthority("ROLE_DELIVERY"))) {
+                role = Role.DELIVERY;
+            }
+
+            return new AuthenticationResponse(token, role);
         }catch (BadCredentialsException e) {
             throw new Exception("INVALID_CREDENTIALS", e);
         }
-
-        UserDetails userDetails = loadUserByUsername(authenticationRequest.getUsername());
-        String token = jwtUtil.generateToken(userDetails);
-        return new AuthenticationResponse(token);
 
     }
 

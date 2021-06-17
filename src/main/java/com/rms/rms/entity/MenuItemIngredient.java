@@ -21,7 +21,7 @@ public class MenuItemIngredient {
     @JsonIgnore
     private MenuItem menuItem;
 
-    @ManyToOne()
+    @ManyToOne
     @MapsId("ingredientId")
     private Ingredient ingredient;
 

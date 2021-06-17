@@ -20,7 +20,10 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
 
         List<String> errors = new ArrayList<>();
 
-        if(notValidLength(password)) errors.add("Password must be between 8 and 16 characters.");
+        if(notValidLength(password)) {
+            context.buildConstraintViolationWithTemplate("Password must be between 8 and 16 characters.")
+                    .addConstraintViolation();
+        }
         if(doesNotContainUppercaseChar(password)) errors.add("Password must contain at least one uppercase character.");
         if(doesNotContainLowercaseChar(password)) errors.add("Password must contain at least one lowercase character.");
         if(doesNotContainDigit(password)) errors.add("Password must contain at least one digit.");
@@ -67,4 +70,6 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
         return true;
     }
 
+    private class ConstraintValidatorBuilder {
+    }
 }

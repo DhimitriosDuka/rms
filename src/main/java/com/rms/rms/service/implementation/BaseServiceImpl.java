@@ -1,14 +1,17 @@
 package com.rms.rms.service.implementation;
 
 import com.rms.rms.mapper.BaseMapper;
-import com.rms.rms.repository.implemetations.BaseImpl;
 import com.rms.rms.service.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
 public class BaseServiceImpl<CREATE_DTO, UPDATE_DTO, RESPONSE_DTO, ENTITY> implements BaseService<CREATE_DTO, UPDATE_DTO, RESPONSE_DTO, ENTITY> {
 
     @Autowired

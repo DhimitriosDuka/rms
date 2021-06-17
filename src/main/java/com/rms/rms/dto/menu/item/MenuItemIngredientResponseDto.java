@@ -10,8 +10,6 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class MenuItemIngredientResponseDto {
 
     private Ingredient ingredient;

@@ -8,6 +8,12 @@ import lombok.Getter;
 public class Path {
 
     public static final String ID = "/{id}";
+    public static final String SAVE = "/save";
+    public static final String ALL = "/all";
+    public static final String REPORT = "/report";
+    public static final String LOGIN = "/login";
+    public static final String FOOD_GROUP_REPORT = REPORT + "/food-group";
+    public static final String ALL_ORDERS_REPORT = REPORT + "/all";
     public static final String INGREDIENT_PATH = "/ingredients";
     public static final String TOP_N_PATH = "/top/{n}";
     public static final String USER_PATH = "/users";

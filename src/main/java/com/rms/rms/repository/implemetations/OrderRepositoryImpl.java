@@ -42,6 +42,7 @@ public class OrderRepositoryImpl extends BaseImpl<Order, OrderFilter>{
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(rootQuery.get("totalPrice"), orderFilter.getTotalPrice()));
             }
 
+            criteriaQuery.orderBy(criteriaBuilder.asc(rootQuery.get("id")));
             criteriaQuery.where(predicates.toArray(new Predicate[0]));
         }
 

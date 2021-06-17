@@ -5,12 +5,14 @@ import com.rms.rms.dto.schedule.ScheduleResponseDto;
 import com.rms.rms.entity.Schedule;
 import com.rms.rms.enums.Role;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 public class UserResponseDto {
 
     private Long id;
@@ -20,7 +22,6 @@ public class UserResponseDto {
     private String email;
     private String telephoneNumber;
     private String address;
-    private Boolean active;
     private Role role;
     private List<ScheduleResponseDto> schedules;
 

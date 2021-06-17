@@ -16,8 +16,8 @@ import java.util.List;
 public interface UserService extends BaseService<UserCreateDto, UserUpdateDto, UserResponseDto, User>, UserDetailsService {
 
     UserResponseDto update(Long id, UserUpdateDto updateDto);
-    void delete(@NotNull Long id);
-    void updatePassword(@NotNull Long id, @Valid UserUpdatePasswordDto password);
+    void delete(Long id);
+    void updatePassword(Long id, UserUpdatePasswordDto password);
     ScheduleResponseDto addScheduleToDeliveryGuy(Long id, ScheduleCreateDto schedule);
     ScheduleResponseDto updateScheduleOfDeliveryGuy(Long userId, ScheduleUpdateDto schedule);
     List<UserResponseDto> findTopCustomers(Integer n);

@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface MenuItemService extends BaseService<MenuItemCreateDto, MenuItemUpdateDto, MenuItemResponseDto, MenuItem>{
 
-    MenuItemResponseDto update(@NotNull Long id, @Valid MenuItemUpdateDto menuItem);
-    MenuItemResponseDto addIngredientToMenuItem(@NotNull Long menuItemId, @Valid MenuItemIngredient menuItemIngredient);
-    void deleteIngredientFromMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId);
-    MenuItemIngredientResponseDto updateIngredientAmountOfMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId, @NotNull MenuItemUpdateAmountDto amount);
+    MenuItemResponseDto update(Long id, MenuItemUpdateDto menuItem);
+    MenuItemResponseDto addIngredientToMenuItem( Long menuItemId, MenuItemIngredient menuItemIngredient);
+    void deleteIngredientFromMenuItem(Long menuItemId, Long ingredientId);
+    MenuItemIngredientResponseDto updateIngredientAmountOfMenuItem(Long menuItemId, Long ingredientId, MenuItemUpdateAmountDto amount);
     List<MenuItemResponseDto> findTopIngredients(Integer n);
     List<MenuItemResponseDto> findAllByFilter(MenuItemFilter menuItemFilter);
 

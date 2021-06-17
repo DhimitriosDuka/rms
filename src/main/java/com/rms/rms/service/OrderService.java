@@ -1,8 +1,6 @@
 package com.rms.rms.service;
 
-import com.rms.rms.dto.order.OrderCreateDto;
-import com.rms.rms.dto.order.OrderResponseDto;
-import com.rms.rms.dto.order.UpdateStatusDto;
+import com.rms.rms.dto.order.*;
 import com.rms.rms.entity.Order;
 import com.rms.rms.entity.OrderMenuItem;
 import com.rms.rms.filters.OrderFilter;
@@ -17,5 +15,8 @@ public interface OrderService extends BaseService<OrderCreateDto, UpdateStatusDt
     OrderResponseDto addMenuItemToOrder(Long orderId, OrderMenuItem order);
     void deleteMenuItemFromOrder(Long orderId, Long menuItemId);
     List<OrderResponseDto> findAllByFilter(OrderFilter orderFilter);
+    List<OrderReportDto> getReportOfOrders();
+    List<FoodGroupReportDto> getReportOfFoodCategory();
+    List<OrderResponseDto> findAllOrdersOfUser();
 
 }

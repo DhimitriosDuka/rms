@@ -1,5 +1,6 @@
 package com.rms.rms.security.entity;
 
+import com.rms.rms.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -8,5 +9,6 @@ import lombok.Data;
 public class AuthenticationResponse {
 
     private String token;
+    private Role role;
 
 }

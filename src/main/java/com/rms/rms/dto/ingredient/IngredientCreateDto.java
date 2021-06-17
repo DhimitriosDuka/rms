@@ -2,9 +2,7 @@ package com.rms.rms.dto.ingredient;
 
 import com.rms.rms.enums.FoodGroup;
 import com.rms.rms.enums.Unit;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
 
@@ -14,8 +12,6 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class IngredientCreateDto {
 
     @NotNull(message = "Name may not be null!")

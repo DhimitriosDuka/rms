@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDto> save(@RequestBody UserCreateDto user) {
+    public ResponseEntity<UserResponseDto> save(@Valid @RequestBody UserCreateDto user) {
         return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
     }
 
@@ -36,48 +38,48 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Path.ID)
-    public ResponseEntity<UserResponseDto> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> findById(@PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_OPERATOR')")
     @DeleteMapping(Path.ID)
-    public void deleteById(@PathVariable Long id){
+    public void deleteById(@PathVariable @Min(0) Long id){
         userService.delete(id);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN', 'ROLE_DELIVERY')")
     @PutMapping(Path.ID)
-    public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody UserUpdateDto user) {
+    public ResponseEntity<UserResponseDto> update(@PathVariable @Min(0) Long id, @Valid @RequestBody UserUpdateDto user) {
         return new ResponseEntity<>(userService.update(id, user), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_OPERATOR', 'ROLE_ADMIN', 'ROLE_DELIVERY')")
     @PutMapping(Path.UPDATE_PASSWORD_OF_USER_WITH_ID)
-    public void updatePassword(@PathVariable Long id, @RequestBody UserUpdatePasswordDto password) {
+    public void updatePassword(@PathVariable @Min(0) Long id, @Valid @RequestBody UserUpdatePasswordDto password) {
         userService.updatePassword(id, password);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(Path.SCHEDULE_PATH)
-    public ResponseEntity<ScheduleResponseDto> addScheduleToDeliveryGuy(@PathVariable Long userId, @RequestBody ScheduleCreateDto schedule) {
+    public ResponseEntity<ScheduleResponseDto> addScheduleToDeliveryGuy(@PathVariable @Min(0) Long userId, @Valid @RequestBody ScheduleCreateDto schedule) {
         return new ResponseEntity<>(userService.addScheduleToDeliveryGuy(userId, schedule), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_DELIVERY')")
     @PutMapping(Path.SCHEDULE_UPDATE_PATH)
-    public ResponseEntity<ScheduleResponseDto> updateScheduleOfDeliveryGuy(@PathVariable Long scheduleId, @RequestBody ScheduleUpdateDto schedule) {
+    public ResponseEntity<ScheduleResponseDto> updateScheduleOfDeliveryGuy(@PathVariable @Min(0) Long scheduleId, @Valid @RequestBody ScheduleUpdateDto schedule) {
         return new ResponseEntity<>(userService.updateScheduleOfDeliveryGuy(scheduleId, schedule), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Path.TOP_N_PATH)
-    public ResponseEntity<List<UserResponseDto>> findTopCustomers(@PathVariable Integer n) {
+    public ResponseEntity<List<UserResponseDto>> findTopCustomers(@PathVariable @Min(0) Integer n) {
         return new ResponseEntity<>(userService.findTopCustomers(n), HttpStatus.OK);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    @PostMapping(Path.LOGIN)
+    public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         return new ResponseEntity<>(userService.authenticate(authenticationRequest), HttpStatus.OK);
     }
 
