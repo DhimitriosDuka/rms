@@ -45,7 +45,6 @@ public class UserUtil {
         UserResponseDto userResponseDto = new UserResponseDto();
         userResponseDto.setId(user.getId());
         userResponseDto.setUserName(user.getUserName());
-        userResponseDto.setActive(user.getActive());
         userResponseDto.setAddress(user.getAddress());
         userResponseDto.setEmail(user.getEmail());
         userResponseDto.setRole(user.getRole());

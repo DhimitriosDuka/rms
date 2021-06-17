@@ -1,14 +1,15 @@
 package com.rms.rms.dto.user;
 
-import com.rms.rms.annotations.Password;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+import javax.validation.constraints.Pattern;
+
+@Getter
+@Setter
 public class UserUpdatePasswordDto {
 
-    @Password
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "Password must contain at minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character!")
     private String password;
 
 }

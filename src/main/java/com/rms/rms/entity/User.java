@@ -1,14 +1,11 @@
 package com.rms.rms.entity;
 
-import com.rms.rms.annotations.Password;
-import com.rms.rms.annotations.PhoneNumber;
 import com.rms.rms.enums.Role;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,10 +30,10 @@ public class User {
     @Email(message = "Please provide a valid email!")
     private String email;
 
-    @Password
     private String password;
 
-    @PhoneNumber
+    @Length(min = 10, max = 13)
+    @Pattern(regexp = "(0|(\\+|00)355)6([789])[0-9]{7,}", message = "Please enter a valid phone number!")
     private String telephoneNumber;
 
     @NotBlank(message = "Address must not be blank")

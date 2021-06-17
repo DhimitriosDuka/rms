@@ -17,6 +17,7 @@ import java.util.List;
 public class OrderResponseDto {
 
     private Long id;
+    private LocalDateTime createdAt;
     private Status status;
     private LocalDateTime deliveryTime;
     private String phoneNumber;

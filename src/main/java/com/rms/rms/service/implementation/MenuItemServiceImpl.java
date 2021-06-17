@@ -32,7 +32,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
     private final MenuItemMapper menuItemMapper;
 
     @Override
-    public MenuItemResponseDto update(@NotNull Long id, @Valid MenuItemUpdateDto menuItem) {
+    public MenuItemResponseDto update(Long id, MenuItemUpdateDto menuItem) {
 
         getMenuItem(id);
         MenuItem entityMenuItem = baseMapper.updateDtoToEntity(menuItem);
@@ -42,7 +42,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
     }
 
     @Override
-    public MenuItemResponseDto addIngredientToMenuItem(@NotNull Long menuItemId, @Valid MenuItemIngredient menuItemIngredient) {
+    public MenuItemResponseDto addIngredientToMenuItem(Long menuItemId, MenuItemIngredient menuItemIngredient) {
 
         MenuItem menuItem = getMenuItem(menuItemId);
 
@@ -59,7 +59,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
     }
 
     @Override
-    public void deleteIngredientFromMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId) {
+    public void deleteIngredientFromMenuItem(Long menuItemId, Long ingredientId) {
 
         MenuItem menuItem = getMenuItem(menuItemId);
         MenuItemIngredientId menuItemIngredientId = new MenuItemIngredientId(ingredientId, menuItemId);
@@ -72,7 +72,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
     }
 
     @Override
-    public MenuItemIngredientResponseDto updateIngredientAmountOfMenuItem(@NotNull Long menuItemId, @NotNull Long ingredientId, @NotNull MenuItemUpdateAmountDto amount) {
+    public MenuItemIngredientResponseDto updateIngredientAmountOfMenuItem(Long menuItemId, Long ingredientId, MenuItemUpdateAmountDto amount) {
 
         MenuItemIngredientId menuItemIngredientId = new MenuItemIngredientId(ingredientId, menuItemId);
         MenuItemIngredient menuItemIngredient = getMenuItemIngredient(menuItemIngredientId);
@@ -105,7 +105,7 @@ public class MenuItemServiceImpl extends BaseServiceImpl<MenuItemCreateDto, Menu
                                         });
     }
 
-    private MenuItem getMenuItem(@NotNull Long menuItemId) {
+    private MenuItem getMenuItem(Long menuItemId) {
         return jpaRepository.findById(menuItemId)
                 .orElseThrow(() -> new MenuItemException("Menu item with id: " + menuItemId + " does not exist!"));
     }

@@ -7,11 +7,14 @@ import com.rms.rms.filters.MenuItemFilter;
 import com.rms.rms.service.MenuItemService;
 import com.rms.rms.utils.Path;
 import lombok.AllArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -23,46 +26,46 @@ public class MenuItemController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<MenuItemResponseDto> save(@RequestBody MenuItemCreateDto menuItem) {
+    public ResponseEntity<MenuItemResponseDto> save(@Valid @RequestBody MenuItemCreateDto menuItem) {
         return new ResponseEntity<>(menuItemService.save(menuItem), HttpStatus.CREATED);
     }
 
-    @PostMapping("/all")
-    public ResponseEntity<List<MenuItemResponseDto>> getAll(@RequestBody(required = false) MenuItemFilter menuItemFilter) {
+    @PostMapping(Path.ALL)
+    public ResponseEntity<List<MenuItemResponseDto>> getAll(@Valid @RequestBody(required = false) MenuItemFilter menuItemFilter) {
         return new ResponseEntity<>(menuItemService.findAllByFilter(menuItemFilter), HttpStatus.OK);
     }
 
     @GetMapping(Path.ID)
-    public ResponseEntity<MenuItemResponseDto> getById(@PathVariable Long id) {
+    public ResponseEntity<MenuItemResponseDto> getById(@PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(menuItemService.findById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(Path.ID)
-    public ResponseEntity<MenuItemResponseDto> update(@PathVariable Long id, @RequestBody MenuItemUpdateDto menuItem) {
+    public ResponseEntity<MenuItemResponseDto> update(@PathVariable @Min(0) Long id, @Valid @RequestBody MenuItemUpdateDto menuItem) {
         return new ResponseEntity<>(menuItemService.update(id, menuItem), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(Path.ID)
-    public ResponseEntity<MenuItemResponseDto> addIngredientToMenuItem(@PathVariable Long id, @RequestBody MenuItemIngredient menuItemIngredient) {
+    public ResponseEntity<MenuItemResponseDto> addIngredientToMenuItem(@PathVariable @Min(0) Long id, @Valid @RequestBody MenuItemIngredient menuItemIngredient) {
         return new ResponseEntity<>(menuItemService.addIngredientToMenuItem(id, menuItemIngredient), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping(Path.MENU_ID_INGREDIENT)
-    public void deleteIngredientFromMenuItem(@PathVariable Long menuItemId, @PathVariable Long ingredientId) {
+    public void deleteIngredientFromMenuItem(@PathVariable  @Min(0) Long menuItemId, @PathVariable @Min(0) Long ingredientId) {
         menuItemService.deleteIngredientFromMenuItem(menuItemId, ingredientId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping(Path.MENU_ID_INGREDIENT)
-    public ResponseEntity<MenuItemIngredientResponseDto> updateAmountOfIngredientAtMenuItem(@PathVariable Long ingredientId, @PathVariable Long menuItemId, @RequestBody MenuItemUpdateAmountDto amount) {
+    public ResponseEntity<MenuItemIngredientResponseDto> updateAmountOfIngredientAtMenuItem(@PathVariable @Min(0) Long ingredientId, @PathVariable @Min(0) Long menuItemId, @Valid @RequestBody MenuItemUpdateAmountDto amount) {
         return new ResponseEntity<>(menuItemService.updateIngredientAmountOfMenuItem(menuItemId, ingredientId, amount), HttpStatus.CREATED);
     }
 
     @GetMapping(Path.TOP_N_PATH)
-    public ResponseEntity<List<MenuItemResponseDto>> findTopMenuItems(@PathVariable Integer n) {
+    public ResponseEntity<List<MenuItemResponseDto>> findTopMenuItems(@PathVariable @Range(min = 0, max = 10) Integer n) {
         return new ResponseEntity<>(menuItemService.findTopIngredients(n), HttpStatus.OK);
     }
 

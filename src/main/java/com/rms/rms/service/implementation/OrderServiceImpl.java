@@ -1,8 +1,6 @@
 package com.rms.rms.service.implementation;
 
-import com.rms.rms.dto.order.OrderCreateDto;
-import com.rms.rms.dto.order.OrderResponseDto;
-import com.rms.rms.dto.order.UpdateStatusDto;
+import com.rms.rms.dto.order.*;
 import com.rms.rms.entity.Order;
 import com.rms.rms.entity.OrderMenuItem;
 import com.rms.rms.entity.embedded.OrderMenuItemId;
@@ -14,6 +12,8 @@ import com.rms.rms.repository.OrderRepository;
 import com.rms.rms.repository.UserRepository;
 import com.rms.rms.service.OrderService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,9 +33,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
     @Override
     public OrderResponseDto save(OrderCreateDto order) {
         Order orderEntity = baseMapper.createDtoToEntity(order);
-
-        orderEntity.setCostumer(userRepository.getOne(3L));
-
+        orderEntity.setCostumer(userRepository.findByUserName(getPrincipalUserName()).get());
         List<Integer> availableDeliveryGuys = userRepository.findAllAvailableDeliveryGuys();
 
         if(!availableDeliveryGuys.isEmpty()) {
@@ -47,15 +45,18 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
 
         orderEntity.setTotalCalories(
           orderEntity.getOrderMenuItems().stream()
-                  .map(val -> val.getMenuItem().getCalories())
+                  .map(val -> val.getMenuItem().getCalories() * val.getAmount())
                   .reduce(0.0, Double::sum)
         );
 
+        System.out.println(orderEntity.getTotalPrice());
+
         orderEntity.setTotalPrice(
                 orderEntity.getOrderMenuItems().stream()
-                        .map(val -> val.getMenuItem().getPrice())
+                        .map(val -> val.getMenuItem().getPrice() * val.getAmount())
                         .reduce(0.0, Double::sum)
         );
+        System.out.println(orderEntity.getTotalPrice());
 
         Order savedOrder = jpaRepository.save(orderEntity);
 
@@ -141,6 +142,24 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
 
     }
 
+    @Override
+    public List<OrderReportDto> getReportOfOrders() {
+        return orderRepository.getReportOfOrders();
+    }
+
+    @Override
+    public List<FoodGroupReportDto> getReportOfFoodCategory() {
+        return orderRepository.getReportOfFoodCategory();
+    }
+
+    @Override
+    public List<OrderResponseDto> findAllOrdersOfUser() {
+        return orderRepository.findAllByCostumer(userRepository.findByUserName(getPrincipalUserName()).get())
+                .stream()
+                .map(baseMapper::entityToResponseDto)
+                .collect(Collectors.toList());
+    }
+
     private OrderMenuItem generateOrderMenuItemEntity(Long orderId, OrderMenuItem order, Order orderWithId) {
         OrderMenuItem orderMenuItem = new OrderMenuItem();
         orderMenuItem.setOrderMenuItemId(new OrderMenuItemId(orderId, order.getMenuItem().getId()));
@@ -153,6 +172,11 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderCreateDto, UpdateStat
 
     private boolean notValidStatusForUpdate(Status status) {
         return !status.equals(Status.ONGOING);
+    }
+
+    private String getPrincipalUserName() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return  ((UserDetails)principal).getUsername();
     }
 
 
